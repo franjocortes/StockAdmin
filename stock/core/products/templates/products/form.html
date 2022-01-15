@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content-title %}
+    <h1 class="h2">{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+    <form method="post" id="productForm">
+        {% csrf_token %}
+
+        {% for field in form.visible_fields %}
+            <div class="form-group">
+                <label for="id_{{ field.name }}">{{ field.label }}:</label>
+                {{ field }}
+
+                {% if field.errors %}
+                    <small>
+                        {% for error in field.errors %}
+                            <p class="text text-danger">{{ error|escape }}</p>
+                        {% endfor %}
+                    </small>
+                {% endif %}
+
+            </div>
+        {% endfor %}
+
+    </form>
+{% endblock %}
+
+{% block content-footer %}
+    <div class="text-right">
+        <button type="submit" form="productForm" class="btn btn-primary">Guardar</button>
+        <a href="{{ back_url }}" class="btn btn-danger">Cancelar</a>
+    </div>
+{% endblock %}

@@ -1,5 +1,89 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block content-title %}
+    <h1 class="h2">{{ title }}</h1>
+{% endblock %}
+
+
 {% block content %}
-    Lista de productos
+
+    <div class="row m-3">
+        <div class="col-1">
+            Buscar
+        </div>
+        <div class="col-4">
+            <input type="text" name="search" id="search" class="form-control">
+        </div>
+        <div class="col-3"></div>
+        <div class="col-4 text-right">
+            <a href="{% url 'products:product-new' %}" class="btn btn-primary">Nuevo</a>
+        </div>
+    </div>
+
+
+    <table class="table" id="table_main">
+        <thead>
+        <tr>
+            <th class="text-center">Código</th>
+            <th class="text-center">Nombre</th>
+            <th class="text-center">Precio U.</th>
+            <th class="text-center">Stock</th>
+            <th class="text-center">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in object_list %}
+            <tr>
+                <td class="text-right">{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+                <td class="text-right">{{ product.unit_price }}</td>
+                <td class="text-right">{{ product.stock }}</td>
+                <td class="text-center">
+                    <a href="{% url 'products:product-edit' product.id %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'products:product-delete' product.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block content-footer %}
+    <div class="text-center">
+        {{ count }} registro(s)
+    </div>
+{% endblock %}
+
+{% block js-scripts %}
+
+    <script src="{% static 'lib/jquery/jquery.uitablefilter.js' %}"></script>
+
+    <script>
+        $(function () {
+
+            $("#search").on("keyup", function () {
+                $.uiTableFilter($('#table_main'), this.value, ['Nombre']);
+            });
+
+            // $.uiTableFilter($('#table_main'), 'Prueba', ['Nombre']);
+
+            {% if messages %}
+                let message = "";
+                {% for message in messages %}
+                    message = "{{ message }}\n";
+                {% endfor %}
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+            {% endif %}
+
+        });
+    </script>
 {% endblock %}
